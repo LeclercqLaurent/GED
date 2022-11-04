@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Media
@@ -13,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="media")
  * @ORM\Entity
  */
+#[ApiResource]
 class Media
 {
     /**
@@ -22,6 +25,9 @@ class Media
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+    #[Assert\NotNull]
+    #[Assert\Type('integer')]
+    #[Assert\Positive]
     private int $id;
 
     /**
@@ -29,6 +35,13 @@ class Media
      *
      * @ORM\Column(name="label", type="string", length=255, nullable=false)
      */
+    #[Assert\NotNull]
+    #[Assert\Length(
+        min: 6,
+        max: 255,
+        minMessage: 'Le libellé doit contenir au moins {{limit}} caractères',
+        maxMessage: 'Le libellé doit contenir moins de {{limit}} caractères'
+    )]
     private string $label;
 
     /**
@@ -36,6 +49,12 @@ class Media
      *
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
+    #[Assert\Length(
+        min: 5,
+        max: 65535,
+        minMessage: 'Votre libellé doit contenir au moins {{limit}} caractères',
+        maxMessage: 'Votre libellé doit contenir moins de {{limit}} caractères'
+    )]
     private ?string $description;
 
     /**
@@ -43,6 +62,14 @@ class Media
      *
      * @ORM\Column(name="path", type="string", length=255, nullable=false)
      */
+    #[Assert\NotNull]
+    #[Assert\Type('string')]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'Le chemin vers le fichier doit contenir au moins {{limit}} caractères',
+        maxMessage: 'Le chemin vers le fichier doit contenir moins de {{limit}} caractères'
+    )]
     private string $path;
 
     /**
@@ -50,6 +77,14 @@ class Media
      *
      * @ORM\Column(name="mime_type", type="string", length=255, nullable=false)
      */
+    #[Assert\NotNull]
+    #[Assert\Type('string')]
+    #[Assert\Length(
+        min: 5,
+        max: 255,
+        minMessage: 'Le type doit contenir au moins {{limit}} caractères',
+        maxMessage: 'Le type doit contenir moins de {{limit}} caractères'
+    )]
     private string $mimeType;
 
     /**
@@ -57,13 +92,17 @@ class Media
      *
      * @ORM\Column(name="size", type="integer", nullable=false, options={"unsigned"=true})
      */
+    #[Assert\NotNull]
+    #[Assert\Type('integer')]
+    #[Assert\Positive]
     private int $size;
 
     /**
      * @var DateTime
      *
-     * @ORM\Column(name="created_at", type="datetime", nullable=true)
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
+    #[Assert\NotNull]
     private DateTime $createdAt;
 
     /**
@@ -78,10 +117,11 @@ class Media
      *
      * @ORM\Column(name="active", type="boolean", nullable=false)
      */
+    #[Assert\NotNull]
     private bool $active;
 
     /**
-     * @var Collection
+     * @var Collection<UserGroup>
      *
      * @ORM\ManyToMany(targetEntity="UserGroup", inversedBy="media")
      * @ORM\JoinTable(name="media_has_user_group",
@@ -103,111 +143,172 @@ class Media
         $this->userGroup = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    /**
+     * @return int
+     */
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getLabel(): ?string
+    /**
+     * @param int $id
+     * @return Media
+     */
+    public function setId(int $id): Media
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function setLabel(string $label): self
+    /**
+     * @param string $label
+     * @return Media
+     */
+    public function setLabel(string $label): Media
     {
         $this->label = $label;
-
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    /**
+     * @param string|null $description
+     * @return Media
+     */
+    public function setDescription(?string $description): Media
     {
         $this->description = $description;
-
         return $this;
     }
 
-    public function getPath(): ?string
+    /**
+     * @return string
+     */
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    public function setPath(string $path): self
+    /**
+     * @param string $path
+     * @return Media
+     */
+    public function setPath(string $path): Media
     {
         $this->path = $path;
-
         return $this;
     }
 
-    public function getMimeType(): ?string
+    /**
+     * @return string
+     */
+    public function getMimeType(): string
     {
         return $this->mimeType;
     }
 
-    public function setMimeType(string $mimeType): self
+    /**
+     * @param string $mimeType
+     * @return Media
+     */
+    public function setMimeType(string $mimeType): Media
     {
         $this->mimeType = $mimeType;
-
         return $this;
     }
 
-    public function getSize(): ?int
+    /**
+     * @return int
+     */
+    public function getSize(): int
     {
         return $this->size;
     }
 
-    public function setSize(int $size): self
+    /**
+     * @param int $size
+     * @return Media
+     */
+    public function setSize(int $size): Media
     {
         $this->size = $size;
-
         return $this;
     }
 
+    /**
+     * @return DateTime
+     */
     public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt): self
+    /**
+     * @param DateTime $createdAt
+     * @return Media
+     */
+    public function setCreatedAt(DateTime $createdAt): Media
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
+    /**
+     * @return DateTime|null
+     */
     public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?DateTime $updatedAt): self
+    /**
+     * @param DateTime|null $updatedAt
+     * @return Media
+     */
+    public function setUpdatedAt(?DateTime $updatedAt): Media
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
-    public function getActive(): ?bool
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
     {
         return $this->active;
     }
 
-    public function setActive(bool $active): self
+    /**
+     * @param bool $active
+     * @return Media
+     */
+    public function setActive(bool $active): Media
     {
         $this->active = $active;
-
         return $this;
     }
 
     /**
      * @return Collection|UserGroup[]
      */
-    public function getUserGroup(): Collection
+    public function getUserGroup(): Collection|UserGroup
     {
         return $this->userGroup;
     }

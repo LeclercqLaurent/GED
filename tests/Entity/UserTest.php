@@ -5,6 +5,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\User;
 use App\Entity\UserGroup;
+use App\Tests\TestTool as Tool;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 
@@ -12,11 +13,7 @@ class UserTest extends KernelTestCase
 {
     public function getEntity(): User
     {
-        $userGroup = new UserGroup();
-        $userGroup->setId(1)
-            ->setLabel('Groupe de test')
-            ->setActive(true)
-            ->setCreatedAt(new \DateTime());
+        $userGroup = $this->createMock(UserGroup::class);
 
         return (new User())
             ->setId(1)
@@ -28,7 +25,8 @@ class UserTest extends KernelTestCase
             ->setPassword('azerty$123456')
             ->setRoles(['ROLE_USER'])
             ->setActive(true)
-            ->setCreatedAt(new \DateTime())
+            ->setCreatedAt(new \DateTime('2022-01-01'))
+            ->setUpdatedAt(new \DateTime('2022-11-01'))
             ->setUserGroup($userGroup);
     }
 
@@ -52,89 +50,81 @@ class UserTest extends KernelTestCase
 
     public function testId()
     {
-        $this->expectError();
-        $this->getEntity()->setId('1a345');
         $this->assertHasErrors($this->getEntity()->setId(0), 1);
+        $this->assertEquals(1, $this->getEntity()->getId());
     }
 
     public function testCivility()
     {
-        $this->expectError();
-        $this->getEntity()->setCivility(null);
         $this->assertHasErrors($this->getEntity()->setCivility('Dr'), 1);
+        $this->assertEquals('Mr', $this->getEntity()->getCivility());
     }
 
     public function testName()
     {
-        $this->expectError();
-        $this->getEntity()->setName(null);
-        $this->assertHasErrors($this->getEntity()->setName(''), 1);
+        $this->assertHasErrors($this->getEntity()->setName(Tool::generateString(1)));
+        $this->assertHasErrors($this->getEntity()->setName(Tool::generateString(256)), 1);
+        $this->assertEquals('DOE', $this->getEntity()->getName());
     }
 
     public function testFirstName()
     {
-        $this->expectError();
-        $this->getEntity()->setFirstname(null);
-        $this->assertHasErrors($this->getEntity()->setFirstname(''), 1);
+        $this->assertHasErrors($this->getEntity()->setFirstname(Tool::generateString(1)));
+        $this->assertHasErrors($this->getEntity()->setFirstname(Tool::generateString(256)), 1);
+        $this->assertEquals('John', $this->getEntity()->getFirstname());
     }
 
     public function testEmail()
     {
-        $this->expectError();
-        $this->getEntity()->setEmail(null);
-        $this->expectError();
-        $this->getEntity()->setEmail(1);
         $this->assertHasErrors($this->getEntity()->setEmail('test'), 1);
         $this->assertHasErrors($this->getEntity()->setEmail('test@tld'), 1);
+        $this->assertEquals('john.doe@example.com', $this->getEntity()->getEmail());
+    }
+
+    public function testLogin()
+    {
+        $this->assertHasErrors($this->getEntity()->setLogin(Tool::generateString(1)), 1);
+        $this->assertEquals('john.doe', $this->getEntity()->getLogin());
     }
 
     public function testPassword()
     {
-        $this->expectError();
-        $this->getEntity()->setPassword(null);
         $this->assertHasErrors($this->getEntity()->setPassword(''), 1);
+        $this->assertEquals('azerty$123456', $this->getEntity()->getPassword());
     }
 
     public function testRole()
     {
-        $this->expectError();
-        $this->getEntity()->setRoles([]);
-        $this->assertHasErrors($this->getEntity()->setRoles(null), 1);
-        $this->assertHasErrors($this->getEntity()->setRoles(['ROLE_EDITOR']), 1);
         $this->assertHasErrors($this->getEntity()->setRoles(['ROLE_USER']));
         $this->assertHasErrors($this->getEntity()->setRoles(['ROLE_ADMIN']));
         $this->assertHasErrors($this->getEntity()->setRoles(['ROLE_SUPERADMIN']));
+        $this->assertEquals(['ROLE_USER'], $this->getEntity()->getRoles());
     }
-
     public function testCreatedAt()
     {
-        $this->expectError();
-        $this->getEntity()->setCreatedAt('');
-        $this->assertHasErrors($this->getEntity()->setCreatedAt(null), 1);
-        $this->assertHasErrors($this->getEntity()->setUpdatedAt(new \DateTime()));
+        $this->assertHasErrors($this->getEntity()->setCreatedAt(new \DateTime()));
+        $this->assertEquals(new \DateTime('2022-01-01'), $this->getEntity()->getCreatedAt());
     }
 
     public function testUpdatedAt()
     {
-        $this->expectError();
-        $this->getEntity()->setUpdatedAt('');
         $this->assertHasErrors($this->getEntity()->setUpdatedAt(null));
         $this->assertHasErrors($this->getEntity()->setUpdatedAt(new \DateTime()));
+        $this->assertEquals(new \DateTime('2022-11-01'), $this->getEntity()->getUpdatedAt());
     }
 
     public function testActive()
     {
-        $this->expectError();
-        $this->getEntity()->setActive(null);
-        $this->expectError();
-        $this->getEntity()->setActive('');
         $this->assertHasErrors($this->getEntity()->setActive(true));
         $this->assertHasErrors($this->getEntity()->setActive(false));
+        $this->assertEquals(true, $this->getEntity()->isActive());
     }
 
     public function testUserGroup()
     {
-        $this->assertHasErrors($this->getEntity()->setUserGroup(new UserGroup()));
+        $userGroup = $this->createMock(UserGroup::class);
+        $this->assertHasErrors($this->getEntity()->setUserGroup($userGroup));
+        $this->assertEquals($userGroup, $this->getEntity()->getUserGroup());
     }
 
 }

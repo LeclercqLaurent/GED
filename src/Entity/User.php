@@ -45,7 +45,7 @@ class User
     private string $login;
 
     /**
-     * @var array
+     * @var array<string>
      *
      * @ORM\Column(name="roles", type="json", nullable=false)
      */
@@ -184,7 +184,7 @@ class User
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
     public function getRoles(): array
     {
@@ -192,7 +192,7 @@ class User
     }
 
     /**
-     * @param array $roles
+     * @param array<string> $roles
      * @return User
      */
     public function setRoles(array $roles): User

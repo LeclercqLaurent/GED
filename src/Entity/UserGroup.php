@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * UserGroup
@@ -13,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="user_group")
  * @ORM\Entity
  */
+#[ApiResource]
 class UserGroup
 {
     /**
@@ -22,6 +25,9 @@ class UserGroup
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+    #[Assert\NotNull]
+    #[Assert\Type('integer')]
+    #[Assert\Positive]
     private int $id;
 
     /**
@@ -29,6 +35,13 @@ class UserGroup
      *
      * @ORM\Column(name="label", type="string", length=255, nullable=false)
      */
+    #[Assert\NotNull]
+    #[Assert\Length(
+        min: 6,
+        max: 255,
+        minMessage: 'Le libellé doit contenir au moins {{limit}} caractères',
+        maxMessage: 'Le libellé doit contenir moins de {{limit}} caractères'
+    )]
     private string $label;
 
     /**
@@ -36,6 +49,7 @@ class UserGroup
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
+    #[Assert\NotNull]
     private DateTime $createdAt;
 
     /**
@@ -46,14 +60,15 @@ class UserGroup
     private ?DateTime $updatedAt;
 
     /**
-     * @var bool|null
+     * @var bool
      *
-     * @ORM\Column(name="active", type="boolean", nullable=true)
+     * @ORM\Column(name="active", type="boolean", nullable=false)
      */
-    private ?bool $active;
+    #[Assert\NotNull]
+    private bool $active;
 
     /**
-     * @var Collection
+     * @var Collection<Media>
      *
      * @ORM\ManyToMany(targetEntity="Media", mappedBy="userType")
      */
@@ -67,62 +82,93 @@ class UserGroup
         $this->media = new ArrayCollection();
     }
 
+    /**
+     * @return int
+     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    /**
+     * @param int $id
+     * @return UserGroup
+     */
+    public function setId(int $id): UserGroup
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getLabel(): ?string
+    /**
+     * @return string
+     */
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function setLabel(string $label): self
+    /**
+     * @param string $label
+     * @return UserGroup
+     */
+    public function setLabel(string $label): UserGroup
     {
         $this->label = $label;
-
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTime
+    /**
+     * @return DateTime
+     */
+    public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt): self
+    /**
+     * @param DateTime $createdAt
+     * @return UserGroup
+     */
+    public function setCreatedAt(DateTime $createdAt): UserGroup
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
+    /**
+     * @return DateTime|null
+     */
     public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?DateTime $updatedAt): self
+    /**
+     * @param DateTime|null $updatedAt
+     * @return UserGroup
+     */
+    public function setUpdatedAt(?DateTime $updatedAt): UserGroup
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
-    public function getActive(): ?bool
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
     {
         return $this->active;
     }
 
-    public function setActive(?bool $active): self
+    /**
+     * @param bool $active
+     * @return UserGroup
+     */
+    public function setActive(bool $active): UserGroup
     {
         $this->active = $active;
-
         return $this;
     }
 
@@ -138,7 +184,7 @@ class UserGroup
     {
         if (!$this->media->contains($medium)) {
             $this->media[] = $medium;
-            $medium->addUserType($this);
+            $medium->addUserGroup($this);
         }
 
         return $this;
@@ -147,7 +193,7 @@ class UserGroup
     public function removeMedium(Media $medium): self
     {
         if ($this->media->removeElement($medium)) {
-            $medium->removeUserType($this);
+            $medium->removeUserGroup($this);
         }
 
         return $this;
