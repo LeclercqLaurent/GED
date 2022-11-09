@@ -23,10 +23,10 @@ SYMFONY       = $(EXEC_PHP) bin/console
 # if you use Docker you can replace with: "docker-compose exec my_php_container $(EXEC_PHP) bin/console"
 
 # Executables: vendors
-PHPUNIT       = ./vendor/bin/phpunit
-PHPSTAN       = ./vendor/bin/phpstan
-PHP_CS_FIXER  = ./vendor/bin/php-cs-fixer
-PHPMETRICS    = ./vendor/bin/phpmetrics
+PHPUNIT       = $(EXEC_PHP) ./vendor/bin/phpunit
+PHPSTAN       = $(EXEC_PHP) ./vendor/bin/phpstan
+PHP_CS_FIXER  = $(EXEC_PHP) ./vendor/bin/php-cs-fixer
+PHPMETRICS    = $(EXEC_PHP) ./vendor/bin/phpmetrics
 
 # Executables: local only
 SYMFONY_BIN   = symfony
