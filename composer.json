@@ -1,6 +1,8 @@
 {
     "type": "project",
     "license": "MIT",
+    "name": "ged/ged",
+    "description": "GED project",
     "authors": [
         {
             "name": "Laurent LECLERCQ",
