@@ -1,6 +1,14 @@
 {
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Laurent LECLERCQ",
+            "email": "laurent@codeam.fr",
+            "homepage": "https://www.codeam.fr",
+            "role": "Developer"
+        }
+    ],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
