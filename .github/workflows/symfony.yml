@@ -62,7 +62,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        run: make install
+        run: make all
 
       # —— Symfony 🎵 ——————————————————————————————————————————————————————————
       - name: Check Symfony requirements
@@ -71,12 +71,12 @@ jobs:
       - name: Check the Symfony console
         run: |
           bin/console about
-          bin/console strangebuzz:version
+          bin/console --version
 
       ## —— Coding standards ✨ ————————————————————————————————————————————————
       - name: Coding standards checks (php_codesniffer + php-cs-fixer)
         run: make cs
-        if: matrix.php-versions == '8.0'
+        if: matrix.php-versions == '8.1'
 
       ## —— Static analysis ✨ —————————————————————————————————————————————————
       - name: Static analysis of PHP code (PHPStan)
