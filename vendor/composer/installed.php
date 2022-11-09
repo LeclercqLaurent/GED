@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '2c14aefe837a6f565e8bdb70d3125de8f1de5d1e',
+        'reference' => '6753399477584a0a2cec23bb83a834bdc744bda2',
         'name' => 'ged/ged',
         'dev' => true,
     ),
@@ -214,7 +214,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '2c14aefe837a6f565e8bdb70d3125de8f1de5d1e',
+            'reference' => '6753399477584a0a2cec23bb83a834bdc744bda2',
             'dev_requirement' => false,
         ),
         'laminas/laminas-code' => array(
