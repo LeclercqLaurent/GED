@@ -80,5 +80,5 @@ jobs:
       # We use the dev env here
       - name: Run functionnal and unit tests
         run: |
-          cp phpunit.xml.ci phpunit.xml
+          cp phpunit.xml.dist phpunit.xml
           make test-all
