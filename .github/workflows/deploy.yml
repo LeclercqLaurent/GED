@@ -1,28 +1,17 @@
 on: push
-name: 🚀 Deploy website on push
+name: Publish App
 jobs:
   web-deploy:
-    name: 🎉 Deploy
+    name: 🚀 Deploy Website Every Commit
     runs-on: ubuntu-latest
     steps:
-<<<<<<< HEAD
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v2
-    
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.2
-      with:
-        server: ${{ secrets.ftp_server }}
-        username: ${{ secrets.ftp_user }}
-        password: ${{ secrets.ftp_password }}
-=======
-      - name: 🚚 Get latest code
-        uses: actions/checkout@v2
+      - name: 🚚 Get Latest Code
+        uses: actions/checkout@v3
 
-      - name: 📂 Sync files
-        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      - name: 📂 Sync Files
+        uses: SamKirkland/web-deploy@v1
         with:
-          server: ftp.samkirkland.com
-          username: myFtpUserName
-          password: ${{ secrets.ftp_password }}
->>>>>>> ed319d8 (First deployment)
+          target-server: ${{ secrets.SSH_SERVER }}
+          remote-user: ${{ secrets.SSH_USERNAME }}
+          private-ssh-key: ${{ secrets.SSH_KEY }}
+          destination-path: ${{ secrets.SSH_PATH }}
